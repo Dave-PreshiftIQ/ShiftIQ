@@ -11,6 +11,7 @@ export async function getBoss(): Promise<PgBoss> {
     retryBackoff: true,
   });
   await boss.start();
+  await boss.createQueue(QUEUE_MATCHING);
   return boss;
 }
 
