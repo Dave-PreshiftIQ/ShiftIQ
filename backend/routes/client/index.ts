@@ -4,7 +4,7 @@ import { PERSONAS } from '../../lib/personas';
 import assessmentRoutes from './assessment';
 import matchesRoutes from './matches';
 
-const VALID_PERSONAS = new Set(PERSONAS.map(p => p.id));
+const VALID_PERSONAS = new Set<string>(PERSONAS.map(p => p.id));
 const r = Router();
 
 r.post('/session', async (req, res) => {
