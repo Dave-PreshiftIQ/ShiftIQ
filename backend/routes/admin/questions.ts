@@ -2,10 +2,10 @@ import { Router } from 'express';
 import { db } from '../../db';
 import { PERSONAS } from '../../lib/personas';
 
-const VALID_PERSONA_IDS = new Set(PERSONAS.map(p => p.id));
-const VALID_DIMS = new Set(['D1','D2','D3','D4','D5','D6','D7','D8','D9']);
-const VALID_TYPES = new Set(['single_select','multi_select','text','number','boolean','range','scale']);
-const VALID_AUDIENCES = new Set(['client','vendor']);
+const VALID_PERSONAS = new Set<string>(PERSONAS.map(p => p.id));
+const VALID_DIMS = new Set<string>(['D1','D2','D3','D4','D5','D6','D7','D8','D9']);
+const VALID_TYPES = new Set<string>(['single_select','multi_select','text','number','boolean','range','scale']);
+const VALID_AUDIENCES = new Set<string>(['client','vendor']);
 
 const r = Router();
 
