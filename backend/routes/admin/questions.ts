@@ -91,7 +91,7 @@ function normalize(raw: any): any | null {
   if (!VALID_TYPES.has(raw.type)) return null;
   if (!VALID_AUDIENCES.has(raw.audience ?? 'client')) return null;
 
-  const personaTags: string[] = Array.isArray(raw.persona_tags) ? raw.persona_tags.filter((p: string) => VALID_PERSONA_IDS.has(p)) : [];
+  const personaTags: string[] = Array.isArray(raw.persona_tags) ? raw.persona_tags.filter((p: string) => VALID_PERSONAS.has(p)) : [];
   const dim = raw.dimension && VALID_DIMS.has(raw.dimension) ? raw.dimension : null;
 
   return {
