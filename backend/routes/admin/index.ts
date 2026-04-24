@@ -1,0 +1,22 @@
+import { Router } from 'express';
+import overviewRoutes from './overview';
+import scoringRoutes from './scoring';
+import questionsRoutes from './questions';
+import changeRequestsRoutes from './change-requests';
+import testMatchRoutes from './test-match';
+import entitiesRoutes from './entities';
+import auditRoutes from './audit';
+import introsRoutes from './intros';
+import vendorsRoutes from './vendors';
+
+const r = Router();
+r.use(overviewRoutes);
+r.use(scoringRoutes);
+r.use(questionsRoutes);
+r.use(changeRequestsRoutes);
+r.use(testMatchRoutes);
+r.use(entitiesRoutes);
+r.use(auditRoutes);
+r.use(introsRoutes);
+r.use(vendorsRoutes);
+export default r;
