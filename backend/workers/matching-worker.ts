@@ -7,6 +7,9 @@ import { db } from '../db';
 (async () => {
   const boss = await getBoss();
 
+  await boss.createQueue(QUEUE_MATCHING);
+  await boss.createQueue('notifications.drain');
+
   await boss.work(QUEUE_MATCHING, { batchSize: 2 }, async ([job]) => {
     const { session_id } = job.data as { session_id: string };
     try {
@@ -26,6 +29,5 @@ import { db } from '../db';
 
   await boss.schedule('notifications.drain', '* * * * *');
   await boss.work('notifications.drain', async () => { await drainNotificationsToEmail(); });
-
   console.log('Workers online: matching + notifications.drain');
 })();
