@@ -7,7 +7,7 @@ import { db } from '../db';
 (async () => {
   const boss = await getBoss();
 
-  await boss.work(QUEUE_MATCHING, { teamSize: 2, teamConcurrency: 2 }, async ([job]) => {
+  await boss.work(QUEUE_MATCHING, { batchSize: 2 }, async ([job]) => {
     const { session_id } = job.data as { session_id: string };
     try {
       const matches = await runMatching(session_id);
