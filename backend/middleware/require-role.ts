@@ -5,7 +5,7 @@ export function requireRole(role: 'admin' | 'client' | 'vendor') {
   return async (req: Request, res: Response, next: NextFunction) => {
     console.log('[requireRole] HIT - timestamp:', Date.now(), 'role:', role, 'path:', req.path);
 
-    const clerkUserId = (req as any).auth?.userId;
+    const clerkUserId = (req as any).auth?.userId; 
 
     console.log('[requireRole] role required:', role);
     console.log('[requireRole] clerkUserId from auth:', clerkUserId);
