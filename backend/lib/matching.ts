@@ -56,7 +56,7 @@ export async function runMatching(sessionId: string) {
     );
 
     await db.query(
-      \UPDATE client_sessions SET match_score = $1::numeric WHERE id = $2`,`
+      `UPDATE CLIENT_SESSIONS set MATCH_SCORE = $1: :NUMERIC where ID = $2`,
       [shortlist[0]?.total ?? null, sess.id],
     );
 
