@@ -49,7 +49,7 @@ export async function runMatching(sessionId: string) {
     await db.query(
       `INSERT INTO notifications (recipient_id, type, payload)
        SELECT id, 'match_created', jsonb_build_object(
-         'session_id', $1, 'status', 'held', 'qualifying_count', $2::int,
+         'session_id', $1::uuid, 'status', 'held', 'qualifying_count', $2::int,
          'reason', 'Fewer than 2 qualifying vendors - manual review required')
        FROM users WHERE role = 'admin'`,
       [sess.id, shortlist.length],
@@ -78,7 +78,7 @@ export async function runMatching(sessionId: string) {
 
   await db.query(
     `INSERT INTO notifications (recipient_id, type, payload)
-     SELECT id, 'match_created', jsonb_build_object('session_id', $1, 'status', 'released', 'count', $2::int)
+     SELECT id, 'match_created', jsonb_build_object('session_id', $1::uuid, 'status', 'released', 'count', $2::int)
      FROM users WHERE role = 'admin'`,
     [sess.id, shortlist.length],
   );
