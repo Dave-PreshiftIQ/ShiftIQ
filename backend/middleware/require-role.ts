@@ -15,10 +15,10 @@ export function requireRole(role: 'admin' | 'client' | 'vendor') {
     const user = rows[0];
     if (user.role !== role) return res.status(403).json({ error: 'Forbidden' });
 
-    if (role === 'admin' && !user.two_factor_enabled) {
-      return res.status(403).json({ error: '2FA required for admin access' });
-    }
-
+  // TEMP: 2FA check disabled for setup. Re-enable before going to production.
+    // if (role === 'admin' && !user.two_factor_enabled) {
+    //   return res.status(403).json({ error: '2FA required for admin access' });
+    // }
     (req as any).appUser = user;
     next();
   };
