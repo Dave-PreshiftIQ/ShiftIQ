@@ -19,7 +19,11 @@ const app = express();
 app.use(helmet());
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? ['https://app.preshiftiq.com']
+    ? [
+        'https://app.preshiftiq.com',
+        'https://shift-iq-frontend.vercel.app',
+        /^https:\/\/shift-iq-frontend-.*\.vercel\.app$/,
+      ]
     : ['http://localhost:3000'],
   credentials: true,
 }));
