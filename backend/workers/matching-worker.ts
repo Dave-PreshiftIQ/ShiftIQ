@@ -6,7 +6,6 @@ import { db } from '../db';
 
 (async () => {
   const boss = await getBoss();
-
   await boss.createQueue(QUEUE_MATCHING);
   await boss.createQueue('notifications.drain');
 
@@ -17,7 +16,7 @@ import { db } from '../db';
       await db.query(`UPDATE client_sessions SET status = 'matched' WHERE id = $1`, [session_id]);
       await db.query(
         `INSERT INTO notifications (recipient_id, type, payload)
-         SELECT id, 'client_submitted', jsonb_build_object('session_id', $1, 'match_count', $2::int)
+         SELECT id, 'client_submitted', jsonb_build_object('session_id', $1::uuid, 'match_count', $2::int)
          FROM users WHERE role = 'admin'`,
         [session_id, matches.length],
       );
@@ -29,5 +28,6 @@ import { db } from '../db';
 
   await boss.schedule('notifications.drain', '* * * * *');
   await boss.work('notifications.drain', async () => { await drainNotificationsToEmail(); });
+
   console.log('Workers online: matching + notifications.drain');
 })();
