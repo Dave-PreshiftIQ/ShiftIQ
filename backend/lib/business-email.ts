@@ -1,49 +1,43 @@
-import dns from 'dns/promises';
-
-export const BLOCKED_DOMAINS = new Set([
-  'gmail.com', 'googlemail.com',
-  'yahoo.com', 'ymail.com', 'rocketmail.com',
-  'hotmail.com', 'outlook.com', 'live.com', 'msn.com',
-  'aol.com',
-  'icloud.com', 'me.com', 'mac.com',
-  'proton.me', 'protonmail.com',
-  'mail.com', 'gmx.com', 'gmx.net',
-  'zoho.com',
-  'yandex.com', 'yandex.ru',
-  'tutanota.com',
-  'mailinator.com', 'guerrillamail.com', '10minutemail.com',
-  'tempmail.com', 'throwaway.email', 'trashmail.com',
+const FREE_EMAIL_DOMAINS = new Set([
+  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'aol.com',
+  'icloud.com', 'mail.com', 'protonmail.com', 'zoho.com', 'gmx.com',
+  'yandex.com', 'fastmail.com', 'msn.com', 'live.com', 'me.com',
 ]);
 
-export type EmailGateResult =
-  | { ok: true;  domain: string }
-  | { ok: false; reason: 'invalid_format' | 'personal_domain' | 'no_mx_records' | 'disposable' };
+export const BLOCKED_DOMAINS = FREE_EMAIL_DOMAINS;
 
-export async function validateBusinessEmail(email: string): Promise<EmailGateResult> {
-  const match = email.trim().toLowerCase().match(/^[^\s@]+@([^\s@]+\.[^\s@]+)$/);
-  if (!match) return { ok: false, reason: 'invalid_format' };
+export type ValidationReason = 'invalid_format' | 'free_email' | 'no_mx_record' | null;
 
-  const domain = match[1];
+export type ValidationResult = {
+  ok: boolean;
+  reason: ValidationReason;
+};
 
-  if (BLOCKED_DOMAINS.has(domain)) {
-    return { ok: false, reason: 'personal_domain' };
+export async function validateBusinessEmail(email: string): Promise<ValidationResult> {
+  if (typeof email !== 'string' || !email.includes('@')) {
+    return { ok: false, reason: 'invalid_format' };
   }
 
-  try {
-    const mx = await dns.resolveMx(domain);
-    if (!mx || mx.length === 0) return { ok: false, reason: 'no_mx_records' };
-  } catch {
-    return { ok: false, reason: 'no_mx_records' };
+  const parts = email.toLowerCase().split('@');
+  if (parts.length !== 2 || !parts[1]) {
+    return { ok: false, reason: 'invalid_format' };
   }
 
-  return { ok: true, domain };
+  const domain = parts[1];
+
+  if (FREE_EMAIL_DOMAINS.has(domain)) {
+    return { ok: false, reason: 'free_email' };
+  }
+
+  // Skip MX lookup - too unreliable on serverless. Trust the domain.
+  return { ok: true, reason: null };
 }
 
-export function businessEmailErrorMessage(reason: Exclude<EmailGateResult, { ok: true }>['reason']): string {
+export function businessEmailErrorMessage(reason: ValidationReason): string {
   switch (reason) {
-    case 'invalid_format':    return 'Please enter a valid email address.';
-    case 'personal_domain':   return 'Please use your business email address. Personal email providers (Gmail, Yahoo, Hotmail, etc.) are not accepted.';
-    case 'no_mx_records':     return 'We could not verify your email domain. Please check the address and try again.';
-    case 'disposable':        return 'Disposable email addresses are not accepted. Please use your business email.';
+    case 'invalid_format': return 'Please enter a valid email address.';
+    case 'free_email':     return 'Please use a business email address.';
+    case 'no_mx_record':   return 'This email domain does not appear valid.';
+    default:               return 'Email validation failed.';
   }
 }
