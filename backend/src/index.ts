@@ -14,7 +14,7 @@ import clientRoutes   from '../routes/client';
 import vendorRoutes   from '../routes/vendor';
 import adminRoutes    from '../routes/admin';
 
-const app = express();
+const app = express();console.log('[STARTUP-PROBE] backend started at', new Date().toISOString(), 'build version: PROBE-1');
 
 app.use(helmet());
 app.use(cors({
