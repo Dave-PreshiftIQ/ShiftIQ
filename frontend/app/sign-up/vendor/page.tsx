@@ -56,9 +56,18 @@ export default function VendorSignUp() {
       const result = await signUp.attemptEmailAddressVerification({ code });
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
-        router.push('/vendor/onboarding');
+        router.push('/client/onboarding');
+      } else {
+        // Verification didn't complete - reload the signup state and try again
+        setError(`Verification status: ${result.status}. Please reload and try again.`);
       }
     } catch (err: any) {
+      const code = err?.errors?.[0]?.code;
+      if (code === 'verification_already_verified' || code === 'session_exists') {
+        // Already verified - just redirect
+        router.push('/client/onboarding');
+        return;
+      }
       setError(err?.errors?.[0]?.message ?? 'Invalid code.');
     }
     setLoading(false);
