@@ -38,6 +38,7 @@ app.use('/api/public', publicRoutes);
 app.use('/api/me',     requireAuth(), meRoutes);
 app.use('/api/client', requireAuth(), requireRole('client'), requireBusinessEmail, clientRoutes);
 app.use('/api/vendor', requireAuth(), requireRole('vendor'), requireBusinessEmail, vendorRoutes);
+app.use('/api/admin', (req, _res, next) => { console.log('[ADMIN-PROBE] hit', req.method, req.path); next(); });
 app.use('/api/admin',  requireAuth(), requireRole('admin'), adminRoutes);
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
