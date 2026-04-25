@@ -3,6 +3,10 @@ import { db } from '../db';
 
 export function requireRole(role: 'admin' | 'client' | 'vendor') {
   return async (req: Request, res: Response, next: NextFunction) => {
+    console.log('[requireRole] HIT - timestamp:', Date.now(), 'role:', role, 'path:', req.path);
+    const clerkUserId = (req as any).auth?.userId;
+    // ... rest of existing codeexport function requireRole(role: 'admin' | 'client' | 'vendor') {
+  return async (req: Request, res: Response, next: NextFunction) => {
     const clerkUserId = (req as any).auth?.userId;
     
     console.log('[requireRole] role required:', role);
